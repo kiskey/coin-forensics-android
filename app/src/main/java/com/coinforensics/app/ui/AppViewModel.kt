@@ -24,6 +24,7 @@ import com.coinforensics.app.model.ReferenceSourceKind
 import com.coinforensics.app.reference.DieReferenceAnalyzer
 import com.coinforensics.app.reference.GenericReferencePackFactory
 import com.coinforensics.app.reference.OnlineReferenceService
+import com.coinforensics.app.reference.OpenCvAssessmentAugmenter
 import com.coinforensics.app.reference.ReferencePackRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -308,14 +309,14 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     .mapValues { (_, loaded) -> ForensicEngine.analyze(loaded.bitmap) }
             }
             val assessment = withContext(Dispatchers.Default) {
-                DieReferenceAnalyzer.assess(selectedPack, afterDownloads.metadata, afterDownloads.images, afterDownloads.referenceSamples)
+                enhancedReferenceAssessment(selectedPack, afterDownloads.metadata, afterDownloads.images, afterDownloads.referenceSamples)
             }
             _state.update {
                 it.copy(
                     analysisBySlot = it.analysisBySlot + analyses,
                     referenceAssessment = assessment,
                     isWorking = false,
-                    message = "Best-evidence authentication complete using ${downloaded.size} newly acquired licensed control image(s)."
+                    message = "OpenCV-enhanced best-evidence authentication complete using ${downloaded.size} newly acquired licensed control image(s)."
                 )
             }
         }
@@ -429,19 +430,31 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             _state.update { it.copy(isWorking = true, message = "Running high-resolution reference evidence checks…") }
             val assessment = withContext(Dispatchers.Default) {
-                DieReferenceAnalyzer.assess(pack, snapshot.metadata, snapshot.images, snapshot.referenceSamples)
+                enhancedReferenceAssessment(pack, snapshot.metadata, snapshot.images, snapshot.referenceSamples)
             }
             _state.update {
                 it.copy(
                     referenceAssessment = assessment,
                     isWorking = false,
-                    message = "Reference-pack assessment complete"
+                    message = "OpenCV-enhanced reference-pack assessment complete"
                 )
             }
         }
     }
 
     fun clearMessage() = _state.update { it.copy(message = null) }
+
+    private fun enhancedReferenceAssessment(
+        pack: ReferencePack,
+        metadata: CoinMetadata,
+        images: Map<ImageSlot, LoadedImage>,
+        referenceSamples: List<ReferenceSampleImage>
+    ) = OpenCvAssessmentAugmenter.augment(
+        base = DieReferenceAnalyzer.assess(pack, metadata, images, referenceSamples),
+        pack = pack,
+        images = images,
+        referenceSamples = referenceSamples
+    )
 
     private fun findBestBuiltInMatch(metadata: CoinMetadata): ReferencePack? = builtInPacks
         .map { pack -> pack to matchScore(pack, metadata) }

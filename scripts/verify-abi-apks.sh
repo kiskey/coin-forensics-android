@@ -36,6 +36,35 @@ if [[ -z "$ARM64" || -z "$ARMV7" ]]; then
   exit 1
 fi
 
+verify_native_abi() {
+  local apk="$1"
+  local expected="$2"
+  local name
+  name="$(basename "$apk")"
+
+  mapfile -t native_abis < <(
+    unzip -Z1 "$apk" \
+      | awk -F/ '/^lib\/[^/]+\/.*\.so$/ { print $2 }' \
+      | sort -u
+  )
+
+  if [[ ${#native_abis[@]} -ne 1 || "${native_abis[0]}" != "$expected" ]]; then
+    echo "Native ABI verification failed for $name. Expected only '$expected', found:" >&2
+    printf '  %s\n' "${native_abis[@]:-<none>}" >&2
+    exit 1
+  fi
+
+  if ! unzip -Z1 "$apk" | grep -q "^lib/${expected}/libopencv_java4\\.so$"; then
+    echo "OpenCV native runtime missing from $name for ABI $expected" >&2
+    exit 1
+  fi
+
+  echo "Verified $name contains only native ABI $expected and includes libopencv_java4.so"
+}
+
+verify_native_abi "$ARM64" "arm64-v8a"
+verify_native_abi "$ARMV7" "armeabi-v7a"
+
 rm -rf "$DEST_DIR"
 mkdir -p "$DEST_DIR"
 cp "$ARM64" "$DEST_DIR/CoinForensics-arm64-v8a.apk"
@@ -46,12 +75,11 @@ cp "$ARMV7" "$DEST_DIR/CoinForensics-armeabi-v7a.apk"
   sha256sum CoinForensics-arm64-v8a.apk CoinForensics-armeabi-v7a.apk > SHA256SUMS.txt
 )
 
-# Guard against accidental universal/x86 artifacts entering the release directory.
 if find "$DEST_DIR" -maxdepth 1 -type f -name '*.apk' \
   \( -name '*x86*' -o -name '*universal*' \) | grep -q .; then
   echo "Forbidden x86/universal APK found in $DEST_DIR" >&2
   exit 1
 fi
 
-echo "Verified ARM-only APK set:"
+echo "Verified ARM-only OpenCV APK set:"
 ls -lh "$DEST_DIR"/*.apk "$DEST_DIR/SHA256SUMS.txt"
