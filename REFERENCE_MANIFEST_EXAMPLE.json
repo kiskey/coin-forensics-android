@@ -1,0 +1,160 @@
+{
+  "packs": [
+    {
+      "id": "example-1900-crown-a",
+      "display_name": "Example 1900 Crown — Mint A",
+      "country": "Exampleland",
+      "denomination": "1 Crown",
+      "year": "1900",
+      "mint_or_variety": "A",
+      "catalog_references": ["EX#100"],
+      "source_url": "https://example.org/coins/example-1900-crown-a",
+      "physical": {
+        "expected_weight_g": 27.0,
+        "weight_tolerance_g": 0.25,
+        "expected_diameter_mm": 39.0,
+        "diameter_tolerance_mm": 0.25,
+        "composition_note": "Example only — replace with documented issue specification",
+        "source_ids": ["example-spec"]
+      },
+      "sources": [
+        {
+          "id": "example-spec",
+          "title": "Example catalogue specification",
+          "authority": "OTHER",
+          "kind": "SPECIFICATION",
+          "scope": "EXACT_DATE_VARIETY",
+          "url": "https://example.org/spec"
+        },
+        {
+          "id": "example-genuine",
+          "title": "Example documented genuine control",
+          "authority": "OTHER",
+          "kind": "CERTIFIED_GENUINE",
+          "scope": "EXACT_DATE_VARIETY",
+          "url": "https://example.org/genuine",
+          "grade_or_status": "Documented genuine"
+        },
+        {
+          "id": "example-fake",
+          "title": "Example documented counterfeit",
+          "authority": "OTHER",
+          "kind": "COUNTERFEIT_DIAGNOSTIC",
+          "scope": "EXACT_DATE_VARIETY",
+          "url": "https://example.org/counterfeit"
+        }
+      ],
+      "regions": [
+        {
+          "id": "obverse-full",
+          "label": "Whole obverse",
+          "side": "OBVERSE",
+          "shape": "FULL_COIN"
+        },
+        {
+          "id": "date",
+          "label": "Date digits",
+          "side": "OBVERSE",
+          "shape": "RECT",
+          "left": 0.36,
+          "top": 0.73,
+          "right": 0.64,
+          "bottom": 0.90
+        },
+        {
+          "id": "reverse-full",
+          "label": "Whole reverse",
+          "side": "REVERSE",
+          "shape": "FULL_COIN"
+        },
+        {
+          "id": "reverse-rim",
+          "label": "Reverse rim / denticles",
+          "side": "REVERSE",
+          "shape": "ANNULUS",
+          "inner_radius": 0.78,
+          "outer_radius": 0.98
+        }
+      ],
+      "markers": [
+        {
+          "id": "date-geometry",
+          "title": "Date geometry",
+          "category": "DATE_GEOMETRY",
+          "side": "OBVERSE",
+          "region_id": "date",
+          "scope": "EXACT_DATE_VARIETY",
+          "automated_test": "REGION_REFERENCE_MATCH",
+          "description": "Compare exact date geometry against documented genuine controls.",
+          "source_ids": ["example-genuine"]
+        },
+        {
+          "id": "reverse-geometry",
+          "title": "Reverse geometry",
+          "category": "RELIEF_DETAIL",
+          "side": "REVERSE",
+          "region_id": "reverse-full",
+          "scope": "EXACT_DATE_VARIETY",
+          "automated_test": "REGION_REFERENCE_MATCH",
+          "description": "Whole reverse control.",
+          "source_ids": ["example-genuine"]
+        },
+        {
+          "id": "known-fake-rim",
+          "title": "Known counterfeit rim comparison",
+          "category": "TRANSFER_DIE",
+          "side": "REVERSE",
+          "region_id": "reverse-rim",
+          "scope": "EXACT_DATE_VARIETY",
+          "automated_test": "MANUAL_ONLY",
+          "description": "Counterfeit reference stays separate from genuine evidence.",
+          "source_ids": ["example-fake"]
+        },
+        {
+          "id": "weight",
+          "title": "Weight specification",
+          "category": "WEIGHT",
+          "scope": "EXACT_DATE_VARIETY",
+          "automated_test": "WEIGHT_TOLERANCE",
+          "description": "Measured weight corroboration.",
+          "source_ids": ["example-spec"]
+        }
+      ],
+      "images": [
+        {
+          "id": "example-genuine-obverse",
+          "source_id": "example-genuine",
+          "title": "Example genuine obverse",
+          "side": "OBVERSE",
+          "source_page_url": "https://example.org/genuine",
+          "image_url": "https://example.org/assets/genuine-obverse.jpg",
+          "license_name": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "creator": "Example rights holder",
+          "can_auto_download": true
+        },
+        {
+          "id": "example-genuine-reverse",
+          "source_id": "example-genuine",
+          "title": "Example genuine reverse",
+          "side": "REVERSE",
+          "source_page_url": "https://example.org/genuine",
+          "image_url": "https://example.org/assets/genuine-reverse.jpg",
+          "permission_basis": "authorized",
+          "can_auto_download": true
+        },
+        {
+          "id": "example-fake-reverse",
+          "source_id": "example-fake",
+          "title": "Example counterfeit reverse",
+          "side": "REVERSE",
+          "source_page_url": "https://example.org/counterfeit",
+          "image_url": "https://example.org/assets/fake-reverse.jpg",
+          "permission_basis": "authorized",
+          "can_auto_download": true
+        }
+      ],
+      "notes": "Template only. Replace all example data with documented provenance before use."
+    }
+  ]
+}
