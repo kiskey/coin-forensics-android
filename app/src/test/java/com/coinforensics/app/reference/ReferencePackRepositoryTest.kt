@@ -31,8 +31,11 @@ class ReferencePackRepositoryTest {
             images = emptyMap()
         )
         val weight = assessment.checks.single { it.markerId == "weight-2696" }
+        assertEquals("INCONSISTENT", weight.status.name)
         assertTrue(weight.detail.contains("26.96"))
+        assertTrue(weight.detail.contains("26.10"))
         assertTrue(assessment.interpretation.contains("evidence", ignoreCase = true))
+        assertTrue(!assessment.interpretation.contains("authenticity probability", ignoreCase = true))
     }
     @Test
     fun physicalChecksAcceptDocumentedNominalMeasurements() {

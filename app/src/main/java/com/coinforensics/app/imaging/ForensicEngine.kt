@@ -332,7 +332,7 @@ object ForensicEngine {
     private fun falseColor(gray: IntArray, out: IntArray, intensity: Float) {
         val gamma = (1.2 / intensity.coerceIn(0.5f, 2.5f)).coerceIn(0.55, 1.8)
         for (i in gray.indices) {
-            val normalized = (255.0 * (gray[i] / 255.0).pow(gamma.toDouble())).roundToInt().coerceIn(0, 255)
+            val normalized = (255.0 * (gray[i] / 255.0).pow(gamma)).roundToInt().coerceIn(0, 255)
             out[i] = heatColor(normalized)
         }
     }
